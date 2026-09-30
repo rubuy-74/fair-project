@@ -1,0 +1,18 @@
+@prefix lbd:  <https://w3id.org/london-bike-sharing/> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# The first row of london_merged.csv as one flat entry
+# (smoke test for lbd:EntryShape).
+
+lbd:row-2015-01-04T000000 a sosa:Observation ;
+    sosa:resultTime "2015-01-04T00:00:00"^^xsd:dateTime ;
+    lbd:HourlyBikeShareCount 182 ;
+    lbd:AirTemperature 3.0 ;
+    lbd:ApparentAirTemperature 2.5 ;
+    lbd:RelativeHumidity 93.0 ;
+    lbd:WindSpeed 6.0 ;
+    lbd:WeatherCondition 3 ;
+    lbd:IsHoliday false ;
+    lbd:IsWeekend true ;
+    lbd:Season 3 .

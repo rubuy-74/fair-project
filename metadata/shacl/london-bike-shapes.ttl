@@ -1,0 +1,90 @@
+@prefix lbd:     <https://w3id.org/london-bike-sharing/> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix dcat:    <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix sosa:    <http://www.w3.org/ns/sosa/> .
+@prefix spdx:    <http://spdx.org/rdf/terms#> .
+@prefix csvw:    <http://www.w3.org/ns/csvw#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix unit:    <http://qudt.org/vocab/unit/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+lbd:DatasetShape a sh:NodeShape ;
+    sh:targetClass dcat:Dataset ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [ sh:path dcterms:title ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcterms:description ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcterms:identifier ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path dcterms:creator ; sh:minCount 1 ; sh:maxCount 1 ; sh:class dcterms:Agent ] ;
+    sh:property [ sh:path dcterms:license ; sh:minCount 1 ; sh:maxCount 1 ; sh:class dcterms:LicenseDocument ] ;
+    sh:property [ sh:path dcterms:temporal ; sh:minCount 1 ; sh:maxCount 1 ; sh:class dcterms:PeriodOfTime ] ;
+    sh:property [ sh:path dcat:landingPage ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcterms:source ; sh:minCount 1 ] ;
+    sh:property [ sh:path dcat:keyword ; sh:minCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path dcat:distribution ; sh:minCount 1 ; sh:maxCount 1 ; sh:class dcat:Distribution ] .
+
+lbd:DistributionShape a sh:NodeShape ;
+    sh:targetClass dcat:Distribution ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [ sh:path rdfs:label ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcat:accessURL ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcat:mediaType ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue "text/csv" ] ;
+    sh:property [ sh:path dcat:byteSize ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ] ;
+    sh:property [ sh:path spdx:checksum ; sh:minCount 1 ; sh:maxCount 1 ; sh:class spdx:Checksum ] ;
+    sh:property [ sh:path csvw:tableSchema ; sh:minCount 1 ; sh:maxCount 1 ; sh:class csvw:Schema ] .
+
+# TODO: why this? if not used remove also why not just use PeriodOfTime
+lbd:PeriodOfTimeShape a sh:NodeShape ;
+    sh:targetClass dcterms:PeriodOfTime ;
+    sh:property [ sh:path dcat:startDate ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] ;
+    sh:property [ sh:path dcat:endDate ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] .
+
+lbd:SchemaShape a sh:NodeShape ;
+    sh:targetClass csvw:Schema ;
+    sh:property [ sh:path csvw:column ; sh:minCount 10 ] .
+
+lbd:ColumnShape a sh:NodeShape ;
+    sh:targetClass csvw:Column ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [
+        sh:path csvw:name ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:in ( "timestamp" "cnt" "t1" "t2" "hum" "wind_speed" "weather_code" "is_holiday" "is_weekend" "season" ) ;
+    ] ;
+    sh:property [
+        sh:path csvw:datatype ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:in ( "datetime" "integer" "decimal" "boolean" "string" ) ;
+    ] ;
+    sh:property [ sh:path csvw:propertyUrl ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "^https://w3id.org/london-bike-sharing/" ] .
+
+
+# TODO: why this? if not used remove
+lbd:ObservablePropertyShape a sh:NodeShape ;
+    sh:targetClass sosa:ObservableProperty ;
+    sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rdfs:comment ; sh:minCount 1 ] ;
+    sh:property [ sh:path qudt:hasUnit ; sh:maxCount 1 ; sh:in ( unit:DEG_C unit:KiloM-PER-HR unit:PERCENT ) ] .
+
+lbd:EntryShape a sh:NodeShape ;
+    sh:targetClass sosa:Observation ;
+    sh:property [
+        sh:path sosa:resultTime ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
+        sh:minInclusive "2015-01-04T00:00:00"^^xsd:dateTime ;
+        sh:maxInclusive "2017-01-03T23:00:00"^^xsd:dateTime ;
+    ] ;
+    sh:property [ sh:path lbd:HourlyBikeShareCount ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 0 ] ;
+    sh:property [ sh:path lbd:AirTemperature ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:property [ sh:path lbd:ApparentAirTemperature ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ] ;
+    sh:property [ sh:path lbd:RelativeHumidity ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 100 ] ;
+    sh:property [ sh:path lbd:WindSpeed ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ] ;
+    sh:property [ sh:path lbd:WeatherCondition ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:in ( 1 2 3 4 7 10 26 94 ) ] ;
+    sh:property [ sh:path lbd:IsHoliday ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path lbd:IsWeekend ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path lbd:Season ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:in ( 0 1 2 3 ) ] .

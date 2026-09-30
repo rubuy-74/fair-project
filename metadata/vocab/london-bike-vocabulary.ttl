@@ -1,0 +1,45 @@
+@prefix lbd:  <https://w3id.org/london-bike-sharing/> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+lbd:HourlyBikeShareCount a sosa:ObservableProperty ;
+    rdfs:label "hourly bike share count"@en ;
+    rdfs:comment "Count of new bike shares (hires) grouped by start hour. Long-duration hires are not taken in the count. Source column: cnt."@en .
+
+lbd:AirTemperature a sosa:ObservableProperty ;
+    rdfs:label "air temperature"@en ;
+    rdfs:comment "Real air temperature. Source column: t1."@en ;
+    qudt:hasUnit unit:DEG_C .
+
+lbd:ApparentAirTemperature a sosa:ObservableProperty ;
+    rdfs:label "apparent air temperature"@en ;
+    rdfs:comment "Air temperature 'feels like'. Source column: t2."@en ;
+    qudt:hasUnit unit:DEG_C .
+
+lbd:RelativeHumidity a sosa:ObservableProperty ;
+    rdfs:label "relative humidity"@en ;
+    rdfs:comment "Relative humidity in percentage. Source column: hum."@en ;
+    qudt:hasUnit unit:PERCENT .
+
+lbd:WindSpeed a sosa:ObservableProperty ;
+    rdfs:label "wind speed"@en ;
+    rdfs:comment "Wind speed. Source column: wind_speed."@en ;
+    qudt:hasUnit unit:KiloM-PER-HR .
+
+lbd:WeatherCondition a sosa:ObservableProperty ;
+    rdfs:label "weather condition"@en ;
+    rdfs:comment "Coded weather condition. Source column: weather_code. Codes: 1 = Clear (mostly clear but have some values with haze/fog/patches of fog/fog in vicinity); 2 = scattered clouds / few clouds; 3 = broken clouds; 4 = cloudy; 7 = rain / light rain shower / light rain; 10 = rain with thunderstorm; 26 = snowfall; 94 = freezing fog."@en .
+
+lbd:IsHoliday a sosa:ObservableProperty ;
+    rdfs:label "is holiday"@en ;
+    rdfs:comment "Whether the day is a UK bank holiday. Source column: is_holiday."@en .
+
+lbd:IsWeekend a sosa:ObservableProperty ;
+    rdfs:label "is weekend"@en ;
+    rdfs:comment "Whether the day falls on a weekend. Source column: is_weekend."@en .
+
+lbd:Season a sosa:ObservableProperty ;
+    rdfs:label "season"@en ;
+    rdfs:comment "Meteorological season. Source column: season. Codes: 0 = spring; 1 = summer; 2 = fall; 3 = winter."@en .
