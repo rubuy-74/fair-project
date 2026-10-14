@@ -75,4 +75,4 @@ lbd:SeasonRelationShape a sh:NodeShape ;
     sh:property [ sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q24384> ] .
 
 lbd:WeatherRelationShape a sh:NodeShape ;
-    sh:property [ sh:path rdf:type ; sh:hasValue <https://www.wikidata.org/entity/Q11663> ] .
+    sh:property [ sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q11663> ] .
