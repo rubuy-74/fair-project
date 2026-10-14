@@ -1,0 +1,69 @@
+@prefix :       <http://localhost:3333/> .
+@prefix obo:    <http://purl.obolibrary.org/obo/> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+<http://localhost:3333> {
+    :1 a schema:Observation ;
+        rdfs:label "1"@en, "3.0"@en, "1" ;
+        :cnt "138" ;
+        :hum "93.0" ;
+        :humidity <http://localhost:3333/1/humidity> ;
+        :is_holiday "0.0", <http://localhost:3333/1/is_holiday> ;
+        :is_weekend "1.0", <http://localhost:3333/1/is_weekend> ;
+        :season "3.0" ;
+        :t1 "3.0" ;
+        :t2 "2.5" ;
+        :temperature <http://localhost:3333/1/temperature> ;
+        :temperature_sensation <http://localhost:3333/1/temperature_sensation> ;
+        :timestamp "2015-01-04 01:00:00", "2015-01-04 01:00:00"^^xsd:dateTime ;
+        :weather :1 ;
+        :weather_code "1.0" ;
+        :wind_speed "5.0", <http://localhost:3333/1/wind_speed> ;
+        obo:BFO_0000066 obo:GAZ_00003672 ;
+        obo:RO_0002092 [
+            rdf:type <null:http://www.wikidata.org/entity/Q24384> ;
+            schema:value :1
+        ], [
+            rdf:type <null:https://www.wikidata.org/entity/Q11663> ;
+            schema:value :1
+        ] ;
+        schema:measuredProperty schema:RentAction ;
+        schema:measuredValue "138"^^xsd:int .
+
+    <http://localhost:3333/1/is_holiday> a schema:PropertyValue ;
+        schema:name "Public holiday"@en ;
+        schema:propertyID <https://www.wikidata.org/entity/Q1445650> ;
+        schema:value "0.0"^^xsd:boolean .
+
+    <http://localhost:3333/1/is_weekend> a schema:PropertyValue ;
+        schema:name "Weekend"@en ;
+        schema:propertyID <https://www.wikidata.org/entity/Q211391> ;
+        schema:value "1.0"^^xsd:boolean .
+
+    <http://localhost:3333/1/temperature> a schema:PropertyValue ;
+        schema:name "Air temperature"@en ;
+        schema:propertyID <http://qudt.org/vocab/quantitykind/Temperature> ;
+        schema:unitCode "CEL" ;
+        schema:value "3"^^xsd:double .
+
+    <http://localhost:3333/1/temperature_sensation> a schema:PropertyValue ;
+        schema:name "Feels-like temperature"@en ;
+        schema:propertyID <https://bimerr.iot.linkeddata.es/def/weather#feels_like> ;
+        schema:unitCode "CEL" ;
+        schema:value "2.5"^^xsd:double .
+
+    <http://localhost:3333/1/humidity> a schema:PropertyValue ;
+        schema:name "Relative humidity"@en ;
+        schema:propertyID <https://bimerr.iot.linkeddata.es/def/weather#Humidity> ;
+        schema:unitCode "P1" ;
+        schema:value "93"^^xsd:double .
+
+    <http://localhost:3333/1/wind_speed> a schema:PropertyValue ;
+        schema:name "Wind speed"@en ;
+        schema:propertyID <https://bimerr.iot.linkeddata.es/def/weather#WindSpeed> ;
+        schema:unitCode "KMH" ;
+        schema:value "5"^^xsd:double .
+}

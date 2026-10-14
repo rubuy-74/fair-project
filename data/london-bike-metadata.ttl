@@ -6,14 +6,18 @@
 @prefix spdx:    <http://spdx.org/rdf/terms#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
-# Dataset catalog record (DCAT)
-
 lbd:londonBikeSharingDataset a dcat:Dataset ;
     dcterms:identifier "london-bike-sharing-dataset" ;
     dcterms:title "London bike sharing dataset"@en ;
     dcterms:description "Historical data for bike sharing in London: hourly counts of new bike-share hires combined with weather observations (air temperature, apparent temperature, relative humidity, wind speed, coded weather condition), UK bank holiday and weekend flags, and meteorological season, covering 2015-01-04 to 2017-01-03. Powered by TfL Open Data."@en ;
-    dcterms:creator "Hristo Mavrodiev" ;
-    dcterms:license "TfL Open Data Licence"@en ;
+    dcterms:creator [
+        a dcterms:Agent ;
+        rdfs:label "Hristo Mavrodiev"
+    ] ;
+    dcterms:license [
+        a dcterms:LicenseDocument ;
+        rdfs:label "TfL Open Data Licence"@en
+    ] ;
     dcterms:temporal [
         a dcterms:PeriodOfTime ;
         dcat:startDate "2015-01-04T00:00:00"^^xsd:dateTime ;
@@ -24,22 +28,14 @@ lbd:londonBikeSharingDataset a dcat:Dataset ;
     dcat:keyword "bike sharing" , "London" , "transport" , "weather" , "time series" ;
     dcat:distribution lbd:londonMergedCsvDistribution .
 
-# Distribution (the CSV file) with its CSVW table schema
 lbd:londonMergedCsvDistribution a dcat:Distribution, csvw:Table ;
     rdfs:label "london_merged.csv"@en ;
     dcat:accessURL <https://www.kaggle.com/datasets/hmavrodiev/london-bike-sharing-dataset/data> ;
     dcat:mediaType "text/csv" ;
+    dcat:byteSize 1034821 ;
+    spdx:checksum [
+        a spdx:Checksum ;
+        spdx:algorithm spdx:checksumAlgorithm_sha256 ;
+        spdx:checksumValue "db881c26314329377f81265480856f2fe4fb049fc1e79bd5f548813c99c4c446"^^xsd:hexBinary
+    ] ;
     csvw:tableSchema lbd:londonMergedCsvSchema .
-
-lbd:londonMergedCsvSchema a csvw:Schema ;
-    csvw:column
-        [ a csvw:Column ; csvw:name "timestamp" ; csvw:datatype "datetime" ] ,
-        [ a csvw:Column ; csvw:name "cnt" ; csvw:datatype "integer" ; csvw:propertyUrl "https://w3id.org/london-bike-sharing/HourlyBikeShareCount" ] ,
-        [ a csvw:Column ; csvw:name "t1" ; csvw:datatype "decimal" ; csvw:propertyUrl "https://w3id.org/london-bike-sharing/AirTemperature" ] ,
-        [ a csvw:Column ; csvw:name "t2" ; csvw:datatype "decimal" ; csvw:propertyUrl "https://w3id.org/london-bike-sharing/ApparentAirTemperature" ] ,
-        [ a csvw:Column ; csvw:name "hum" ; csvw:datatype "decimal" ; csvw:propertyUrl "https://w3id.org/london-bike-sharing/RelativeHumidity" ] ,
-        [ a csvw:Column ; csvw:name "wind_speed" ; csvw:datatype "decimal" ; csvw:propertyUrl "https://w3id.org/london-bike-sharing/WindSpeed" ] ,
-        [ a csvw:Column ; csvw:name "weather_code" ; csvw:datatype "integer" ; csvw:propertyUrl "https://w3id.org/london-bike-sharing/WeatherCondition" ] ,
-        [ a csvw:Column ; csvw:name "is_holiday" ; csvw:datatype "boolean" ; csvw:propertyUrl "https://w3id.org/london-bike-sharing/IsHoliday" ] ,
-        [ a csvw:Column ; csvw:name "is_weekend" ; csvw:datatype "boolean" ; csvw:propertyUrl "https://w3id.org/london-bike-sharing/IsWeekend" ] ,
-        [ a csvw:Column ; csvw:name "season" ; csvw:datatype "integer" ; csvw:propertyUrl "https://w3id.org/london-bike-sharing/Season" ] .

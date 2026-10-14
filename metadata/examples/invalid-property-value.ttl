@@ -1,0 +1,12 @@
+@prefix base:   <http://localhost:3333/> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+<http://localhost:3333/4>
+    base:temperature <http://localhost:3333/4/temperature> .
+
+<http://localhost:3333/4/temperature> a schema:PropertyValue ;
+    schema:value "4"^^xsd:string ;
+    schema:propertyID <http://qudt.org/vocab/quantitykind/Temperature> ;
+    schema:unitCode "CEL" ;
+    schema:name "Air temperature"@en .

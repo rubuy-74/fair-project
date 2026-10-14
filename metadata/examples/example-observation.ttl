@@ -1,18 +1,66 @@
-@prefix lbd:  <https://w3id.org/london-bike-sharing/> .
-@prefix sosa: <http://www.w3.org/ns/sosa/> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix base:   <http://localhost:3333/> .
+@prefix obo:    <http://purl.obolibrary.org/obo/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
 
-# The first row of london_merged.csv as one flat entry
-# (smoke test for lbd:EntryShape).
+<http://localhost:3333/4> a schema:Observation ;
+    base:timestamp "2015-01-04T04:00:00"^^xsd:dateTime ;
+    schema:measuredValue "47"^^xsd:int ;
+    base:weather <http://localhost:3333/weather/3> ;
+    base:is_holiday <http://localhost:3333/4/is_holiday> ;
+    base:is_weekend <http://localhost:3333/4/is_weekend> ;
+    schema:measuredProperty schema:RentAction ;
+    obo:BFO_0000066 <http://purl.obolibrary.org/obo/GAZ_00003672> ;
+    base:temperature <http://localhost:3333/4/temperature> ;
+    base:temperature_sensation <http://localhost:3333/4/temperature_sensation> ;
+    base:humidity <http://localhost:3333/4/humidity> ;
+    base:wind_speed <http://localhost:3333/4/wind_speed> ;
+    obo:RO_0002092 [
+        a <http://www.wikidata.org/entity/Q24384> ;
+        schema:value <http://localhost:3333/season/3>
+    ] , [
+        a <https://www.wikidata.org/entity/Q11663> ;
+        schema:value <http://localhost:3333/weather/3>
+    ] .
 
-lbd:row-2015-01-04T000000 a sosa:Observation ;
-    sosa:resultTime "2015-01-04T00:00:00"^^xsd:dateTime ;
-    lbd:HourlyBikeShareCount 182 ;
-    lbd:AirTemperature 3.0 ;
-    lbd:ApparentAirTemperature 2.5 ;
-    lbd:RelativeHumidity 93.0 ;
-    lbd:WindSpeed 6.0 ;
-    lbd:WeatherCondition 3 ;
-    lbd:IsHoliday false ;
-    lbd:IsWeekend true ;
-    lbd:Season 3 .
+<http://localhost:3333/weather/3>
+    rdfs:label "Broken clouds" ;
+    rdfs:label "Broken clouds"@en .
+
+<http://localhost:3333/season/3>
+    rdfs:label "Winter"@en .
+
+<http://localhost:3333/4/is_holiday> a schema:PropertyValue ;
+    schema:value "false"^^xsd:boolean ;
+    schema:propertyID <https://www.wikidata.org/entity/Q1445650> ;
+    schema:name "Public holiday"@en .
+
+<http://localhost:3333/4/is_weekend> a schema:PropertyValue ;
+    schema:value "true"^^xsd:boolean ;
+    schema:propertyID <https://www.wikidata.org/entity/Q211391> ;
+    schema:name "Weekend"@en .
+
+<http://localhost:3333/4/temperature> a schema:PropertyValue ;
+    schema:value "4"^^xsd:double ;
+    schema:propertyID <http://qudt.org/vocab/quantitykind/Temperature> ;
+    schema:unitCode "CEL" ;
+    schema:name "Air temperature"@en .
+
+<http://localhost:3333/4/temperature_sensation> a schema:PropertyValue ;
+    schema:value "2"^^xsd:double ;
+    schema:propertyID <https://bimerr.iot.linkeddata.es/def/weather#feels_like> ;
+    schema:unitCode "CEL" ;
+    schema:name "Feels-like temperature"@en .
+
+<http://localhost:3333/4/humidity> a schema:PropertyValue ;
+    schema:value "93"^^xsd:double ;
+    schema:propertyID <https://bimerr.iot.linkeddata.es/def/weather#Humidity> ;
+    schema:unitCode "P1" ;
+    schema:name "Relative humidity"@en .
+
+<http://localhost:3333/4/wind_speed> a schema:PropertyValue ;
+    schema:value "6"^^xsd:double ;
+    schema:propertyID <https://bimerr.iot.linkeddata.es/def/weather#WindSpeed> ;
+    schema:unitCode "KMH" ;
+    schema:name "Wind speed"@en .

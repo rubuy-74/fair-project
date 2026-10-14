@@ -1,0 +1,78 @@
+@prefix lbd:    <https://w3id.org/london-bike-sharing/> .
+@prefix base:   <http://localhost:3333/> .
+@prefix sh:     <http://www.w3.org/ns/shacl#> .
+@prefix schema: <http://schema.org/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix obo:    <http://purl.obolibrary.org/obo/> .
+
+lbd:PropertyValueShape a sh:NodeShape ;
+    sh:targetClass schema:PropertyValue ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [ sh:path schema:name ; sh:minCount 1 ; sh:maxCount 1 ; sh:languageIn ( "en" ) ] ;
+    sh:property [ sh:path schema:propertyID ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path schema:unitCode ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path schema:value ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:xone (
+        lbd:HolidayValueShape
+        lbd:WeekendValueShape
+        lbd:TemperatureValueShape
+        lbd:TemperatureSensationValueShape
+        lbd:HumidityValueShape
+        lbd:WindValueShape
+    ) .
+
+lbd:HolidayValueShape a sh:NodeShape ;
+    sh:class schema:PropertyValue ;
+    sh:property [ sh:path schema:value ; sh:datatype xsd:boolean ; sh:pattern "^(true|false|1|0)$" ] ;
+    sh:property [ sh:path schema:propertyID ; sh:hasValue <https://www.wikidata.org/entity/Q1445650> ] ;
+    sh:property [ sh:path schema:name ; sh:hasValue "Public holiday"@en ] .
+
+lbd:WeekendValueShape a sh:NodeShape ;
+    sh:class schema:PropertyValue ;
+    sh:property [ sh:path schema:value ; sh:datatype xsd:boolean ; sh:pattern "^(true|false|1|0)$" ] ;
+    sh:property [ sh:path schema:propertyID ; sh:hasValue <https://www.wikidata.org/entity/Q211391> ] ;
+    sh:property [ sh:path schema:name ; sh:hasValue "Weekend"@en ] .
+
+lbd:TemperatureValueShape a sh:NodeShape ;
+    sh:class schema:PropertyValue ;
+    sh:property [ sh:path schema:value ; sh:datatype xsd:double ] ;
+    sh:property [ sh:path schema:propertyID ; sh:hasValue <http://qudt.org/vocab/quantitykind/Temperature> ] ;
+    sh:property [ sh:path schema:unitCode ; sh:hasValue "CEL" ] ;
+    sh:property [ sh:path schema:name ; sh:hasValue "Air temperature"@en ] .
+
+lbd:TemperatureSensationValueShape a sh:NodeShape ;
+    sh:class schema:PropertyValue ;
+    sh:property [ sh:path schema:value ; sh:datatype xsd:double ] ;
+    sh:property [ sh:path schema:propertyID ; sh:hasValue <https://bimerr.iot.linkeddata.es/def/weather#feels_like> ] ;
+    sh:property [ sh:path schema:unitCode ; sh:hasValue "CEL" ] ;
+    sh:property [ sh:path schema:name ; sh:hasValue "Feels-like temperature"@en ] .
+
+lbd:HumidityValueShape a sh:NodeShape ;
+    sh:class schema:PropertyValue ;
+    sh:property [ sh:path schema:value ; sh:datatype xsd:double ; sh:minInclusive 0 ; sh:maxInclusive 100 ] ;
+    sh:property [ sh:path schema:propertyID ; sh:hasValue <https://bimerr.iot.linkeddata.es/def/weather#Humidity> ] ;
+    sh:property [ sh:path schema:unitCode ; sh:hasValue "P1" ] ;
+    sh:property [ sh:path schema:name ; sh:hasValue "Relative humidity"@en ] .
+
+lbd:WindValueShape a sh:NodeShape ;
+    sh:class schema:PropertyValue ;
+    sh:property [ sh:path schema:value ; sh:datatype xsd:double ; sh:minInclusive 0 ] ;
+    sh:property [ sh:path schema:propertyID ; sh:hasValue <https://bimerr.iot.linkeddata.es/def/weather#WindSpeed> ] ;
+    sh:property [ sh:path schema:unitCode ; sh:hasValue "KMH" ] ;
+    sh:property [ sh:path schema:name ; sh:hasValue "Wind speed"@en ] .
+
+lbd:RelationShape a sh:NodeShape ;
+    sh:targetObjectsOf obo:RO_0002092 ;
+    sh:closed true ;
+    sh:property [ sh:path rdf:type ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path schema:value ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:xone ( lbd:SeasonRelationShape lbd:WeatherRelationShape ) .
+
+lbd:SeasonRelationShape a sh:NodeShape ;
+    sh:property [ sh:path rdf:type ; sh:hasValue <http://www.wikidata.org/entity/Q24384> ] .
+
+lbd:WeatherRelationShape a sh:NodeShape ;
+    sh:property [ sh:path rdf:type ; sh:hasValue <https://www.wikidata.org/entity/Q11663> ] .

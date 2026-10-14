@@ -1,0 +1,87 @@
+@prefix lbd:     <https://w3id.org/london-bike-sharing/> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix dcat:    <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix spdx:    <http://spdx.org/rdf/terms#> .
+@prefix csvw:    <http://www.w3.org/ns/csvw#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix unit:    <http://qudt.org/vocab/unit/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+lbd:DatasetShape a sh:NodeShape ;
+    sh:targetClass dcat:Dataset ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [ sh:path dcterms:title ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcterms:description ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcterms:identifier ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path dcterms:creator ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:AgentShape ] ;
+    sh:property [ sh:path dcterms:license ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:LicenseShape ] ;
+    sh:property [ sh:path dcterms:temporal ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:PeriodOfTimeShape ] ;
+    sh:property [ sh:path dcat:landingPage ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path dcterms:source ; sh:minCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path dcat:keyword ; sh:minCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path dcat:distribution ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:DistributionShape ] .
+
+lbd:AgentShape a sh:NodeShape ;
+    sh:class dcterms:Agent ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+lbd:LicenseShape a sh:NodeShape ;
+    sh:class dcterms:LicenseDocument ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+lbd:DistributionShape a sh:NodeShape ;
+    sh:class dcat:Distribution ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [ sh:path rdfs:label ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcat:accessURL ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path dcat:mediaType ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:hasValue "text/csv" ] ;
+    sh:property [ sh:path dcat:byteSize ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ] ;
+    sh:property [ sh:path spdx:checksum ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:ChecksumShape ] ;
+    sh:property [ sh:path csvw:tableSchema ; sh:minCount 1 ; sh:maxCount 1 ; sh:class csvw:Schema ] .
+
+lbd:ChecksumShape a sh:NodeShape ;
+    sh:class spdx:Checksum ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [ sh:path spdx:algorithm ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue spdx:checksumAlgorithm_sha256 ] ;
+    sh:property [ sh:path spdx:checksumValue ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:hexBinary ; sh:pattern "^[0-9a-fA-F]{64}$" ] .
+
+lbd:PeriodOfTimeShape a sh:NodeShape ;
+    sh:class dcterms:PeriodOfTime ;
+    sh:property [ sh:path dcat:startDate ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] ;
+    sh:property [ sh:path dcat:endDate ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] .
+
+lbd:ObservablePropertyShape a sh:NodeShape ;
+    sh:targetClass <http://www.w3.org/ns/sosa/ObservableProperty> ;
+    sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path rdfs:comment ; sh:minCount 1 ] ;
+    sh:property [ sh:path qudt:hasUnit ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] .
+
+lbd:AirTemperatureShape a sh:NodeShape ;
+    sh:targetNode lbd:AirTemperature ;
+    sh:property [ sh:path qudt:hasUnit ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue unit:DEG_C ] .
+
+lbd:ApparentAirTemperatureShape a sh:NodeShape ;
+    sh:targetNode lbd:ApparentAirTemperature ;
+    sh:property [ sh:path qudt:hasUnit ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue unit:DEG_C ] .
+
+lbd:RelativeHumidityShape a sh:NodeShape ;
+    sh:targetNode lbd:RelativeHumidity ;
+    sh:property [ sh:path qudt:hasUnit ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue unit:PERCENT ] .
+
+lbd:WindSpeedShape a sh:NodeShape ;
+    sh:targetNode lbd:WindSpeed ;
+    sh:property [ sh:path qudt:hasUnit ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue unit:KiloM-PER-HR ] .
+
+lbd:UnitlessObservablePropertyShape a sh:NodeShape ;
+    sh:targetNode lbd:HourlyBikeShareCount, lbd:WeatherCondition, lbd:IsHoliday, lbd:IsWeekend, lbd:Season ;
+    sh:property [ sh:path qudt:hasUnit ; sh:maxCount 0 ] .
