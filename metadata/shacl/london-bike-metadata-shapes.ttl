@@ -3,7 +3,6 @@
 @prefix dcat:    <http://www.w3.org/ns/dcat#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix spdx:    <http://spdx.org/rdf/terms#> .
-@prefix csvw:    <http://www.w3.org/ns/csvw#> .
 @prefix qudt:    <http://qudt.org/schema/qudt/> .
 @prefix unit:    <http://qudt.org/vocab/unit/> .
 @prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
@@ -18,12 +17,14 @@ lbd:DatasetShape a sh:NodeShape ;
     sh:property [ sh:path dcterms:description ; sh:minCount 1 ; sh:maxCount 1 ] ;
     sh:property [ sh:path dcterms:identifier ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
     sh:property [ sh:path dcterms:creator ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:AgentShape ] ;
-    sh:property [ sh:path dcterms:license ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:LicenseShape ] ;
+    sh:property [ sh:path dcterms:license ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path dcterms:rights ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:RightsShape ] ;
+    sh:property [ sh:path dcterms:provenance ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:ProvenanceShape ] ;
     sh:property [ sh:path dcterms:temporal ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:PeriodOfTimeShape ] ;
     sh:property [ sh:path dcat:landingPage ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
     sh:property [ sh:path dcterms:source ; sh:minCount 1 ; sh:nodeKind sh:IRI ] ;
     sh:property [ sh:path dcat:keyword ; sh:minCount 1 ; sh:datatype xsd:string ] ;
-    sh:property [ sh:path dcat:distribution ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:DistributionShape ] .
+    sh:property [ sh:path dcat:distribution ; sh:minCount 1 ; sh:node lbd:DistributionShape ] .
 
 lbd:AgentShape a sh:NodeShape ;
     sh:class dcterms:Agent ;
@@ -31,10 +32,16 @@ lbd:AgentShape a sh:NodeShape ;
     sh:ignoredProperties ( rdf:type ) ;
     sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] .
 
-lbd:LicenseShape a sh:NodeShape ;
-    sh:class dcterms:LicenseDocument ;
+lbd:RightsShape a sh:NodeShape ;
+    sh:class dcterms:RightsStatement ;
     sh:closed true ;
     sh:ignoredProperties ( rdf:type ) ;
+    sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcterms:description ; sh:minCount 1 ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcterms:source ; sh:minCount 1 ; sh:nodeKind sh:IRI ] .
+
+lbd:ProvenanceShape a sh:NodeShape ;
+    sh:class dcterms:ProvenanceStatement ;
     sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] .
 
 lbd:DistributionShape a sh:NodeShape ;
@@ -42,11 +49,36 @@ lbd:DistributionShape a sh:NodeShape ;
     sh:closed true ;
     sh:ignoredProperties ( rdf:type ) ;
     sh:property [ sh:path rdfs:label ; sh:maxCount 1 ] ;
-    sh:property [ sh:path dcat:accessURL ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
-    sh:property [ sh:path dcat:mediaType ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:hasValue "text/csv" ] ;
-    sh:property [ sh:path dcat:byteSize ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ] ;
-    sh:property [ sh:path spdx:checksum ; sh:minCount 1 ; sh:maxCount 1 ; sh:node lbd:ChecksumShape ] ;
-    sh:property [ sh:path csvw:tableSchema ; sh:minCount 1 ; sh:maxCount 1 ; sh:class csvw:Schema ] .
+    sh:property [ sh:path dcterms:description ; sh:maxCount 1 ] ;
+    sh:property [ sh:path dcterms:identifier ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path dcterms:format ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path dcterms:conformsTo ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path dcat:accessURL ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path dcat:downloadURL ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path dcat:mediaType ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path dcat:byteSize ; sh:maxCount 1 ; sh:datatype xsd:integer ; sh:minInclusive 1 ] ;
+    sh:property [ sh:path spdx:checksum ; sh:maxCount 1 ; sh:node lbd:ChecksumShape ] ;
+    sh:xone ( lbd:CsvDistributionShape lbd:RdfDistributionShape ) .
+
+lbd:CsvDistributionShape a sh:NodeShape ;
+    sh:property [ sh:path dcat:mediaType ; sh:hasValue "text/csv" ] ;
+    sh:property [ sh:path dcat:accessURL ; sh:minCount 1 ] ;
+    sh:property [ sh:path dcat:byteSize ; sh:minCount 1 ] ;
+    sh:property [ sh:path spdx:checksum ; sh:minCount 1 ] .
+
+lbd:RdfDistributionShape a sh:NodeShape ;
+    sh:property [ sh:path dcat:mediaType ; sh:hasValue "text/turtle" ] ;
+    sh:property [ sh:path dcterms:identifier ; sh:minCount 1 ] ;
+    sh:property [ sh:path dcterms:format ; sh:hasValue <http://www.w3.org/ns/formats/Turtle> ] ;
+    sh:property [ sh:path dcterms:conformsTo ; sh:hasValue <https://www.w3.org/TR/turtle/> ] .
+
+# Activated explicitly by the validator's --publication option, not locally.
+# These are URL syntax/completeness checks, not HTTP reachability guarantees.
+lbd:PublishedDistributionShape a sh:NodeShape ;
+    sh:property [ sh:path dcat:accessURL ; sh:minCount 1 ; sh:nodeKind sh:IRI ; sh:pattern "^https?://[^/]+/" ] ;
+    sh:property [ sh:path dcat:downloadURL ; sh:minCount 1 ; sh:nodeKind sh:IRI ; sh:pattern "^https?://[^/]+/" ] ;
+    sh:property [ sh:path dcat:byteSize ; sh:minCount 1 ] ;
+    sh:property [ sh:path spdx:checksum ; sh:minCount 1 ] .
 
 lbd:ChecksumShape a sh:NodeShape ;
     sh:class spdx:Checksum ;
