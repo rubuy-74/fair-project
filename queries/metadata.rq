@@ -1,0 +1,16 @@
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# CQ8. Long form avoids creator/source/rights Cartesian products.
+# Rights uncertainty is not a licence grant. Include any explicit licence too.
+SELECT ?dataset ?predicate ?object ?label ?description ?source WHERE {
+  ?dataset a dcat:Dataset ; ?predicate ?object .
+  VALUES ?predicate {
+    dcterms:creator dcterms:source dcterms:rights dcterms:license dcterms:provenance
+  }
+  OPTIONAL { ?object rdfs:label ?label }
+  OPTIONAL { ?object dcterms:description ?description }
+  OPTIONAL { ?object dcterms:source ?source }
+}
+ORDER BY ?dataset ?predicate ?label ?source ?object

@@ -6,6 +6,7 @@
 
 <http://localhost:3333/4> a schema:Observation ;
     base:timestamp "2015-01-04T04:00:00"^^xsd:dateTime ;
+    base:weather_code "3"^^xsd:int ;
     schema:measuredValue "47"^^xsd:int ;
     base:weather <http://localhost:3333/weather/3> ;
     base:is_holiday <http://localhost:3333/4/is_holiday> ;
@@ -20,7 +21,7 @@
         a <http://www.wikidata.org/entity/Q24384> ;
         schema:value <http://localhost:3333/season/3>
     ] , [
-        a <https://www.wikidata.org/entity/Q11663> ;
+        a <http://www.wikidata.org/entity/Q11663> ;
         schema:value <http://localhost:3333/weather/3>
     ] .
 

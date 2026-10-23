@@ -1,12 +1,18 @@
+import argparse
 from pathlib import Path
 
 from pyshacl import validate
-from rdflib import Dataset, Graph, Literal, URIRef
+from rdflib import Dataset, Graph, Literal, Namespace, URIRef
 
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA_SHAPES = ROOT / "metadata/shacl/london-bike-data-shapes.ttl"
 METADATA_SHAPES = ROOT / "metadata/shacl/london-bike-metadata-shapes.ttl"
+METADATA = ROOT / "data/london-bike-metadata.ttl"
+VOCABULARY = ROOT / "metadata/vocab/london-bike-vocabulary.ttl"
+LBD = Namespace("https://w3id.org/london-bike-sharing/")
+SH = Namespace("http://www.w3.org/ns/shacl#")
+DCAT = Namespace("http://www.w3.org/ns/dcat#")
 
 
 def load_graph(*paths: Path) -> Graph:
@@ -16,8 +22,12 @@ def load_graph(*paths: Path) -> Graph:
     return graph
 
 
-def assert_validation(name: str, data: Graph, expected: bool, *shape_paths: Path) -> None:
+def assert_validation(
+    name: str, data: Graph, expected: bool, *shape_paths: Path, publication: bool = False
+) -> None:
     shapes = load_graph(*(shape_paths or (DATA_SHAPES,)))
+    if publication:
+        shapes.add((LBD.PublishedDistributionShape, SH.targetClass, DCAT.Distribution))
     conforms, _, report = validate(
         data_graph=data,
         shacl_graph=shapes,
@@ -30,11 +40,15 @@ def assert_validation(name: str, data: Graph, expected: bool, *shape_paths: Path
 
 
 def main() -> None:
-    metadata = load_graph(
-        ROOT / "metadata/dataset-metadata/london-bike-metadata.ttl",
-        ROOT / "metadata/vocab/london-bike-vocabulary.ttl",
+    parser = argparse.ArgumentParser(description="Validate local metadata and RDF fixtures")
+    parser.add_argument(
+        "--publication", action="store_true",
+        help="also require public URL syntax and final size/checksum on each distribution",
     )
-    assert_validation("dataset metadata", metadata, True, METADATA_SHAPES)
+    args = parser.parse_args()
+    metadata = load_graph(METADATA, VOCABULARY)
+    assert_validation("dataset metadata", metadata, True, METADATA_SHAPES, publication=args.publication)
+    print("Dataset metadata validated without inspecting CSV columns or cells.")
 
     example_path = ROOT / "metadata/examples/example-observation.ttl"
     assert_validation(

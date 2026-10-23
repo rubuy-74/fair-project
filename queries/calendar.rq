@@ -1,0 +1,17 @@
+PREFIX base: <http://localhost:3333/>
+PREFIX schema: <http://schema.org/>
+
+# CQ2 and CQ3. Each flag is analysed separately, not as a joint grouping.
+SELECT ?flag ?value (COUNT(*) AS ?hours) (SUM(?hires) AS ?totalHires)
+       (AVG(?hires) AS ?meanHourlyHires) WHERE {
+  {
+    ?observation base:is_weekend/schema:value ?value .
+    BIND(base:is_weekend AS ?flag)
+  } UNION {
+    ?observation base:is_holiday/schema:value ?value .
+    BIND(base:is_holiday AS ?flag)
+  }
+  ?observation schema:measuredValue ?hires .
+}
+GROUP BY ?flag ?value
+ORDER BY ?flag ?value
