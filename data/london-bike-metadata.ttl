@@ -13,6 +13,13 @@ lbd:londonBikeSharingDataset a dcat:Dataset ;
         a dcterms:Agent ;
         rdfs:label "Hristo Mavrodiev"
     ] ;
+    dcterms:contributor [
+        a dcterms:Agent ;
+        rdfs:label "Rubem Neto"
+    ], [
+        a dcterms:Agent ;
+        rdfs:label "Pedro Oliveira"
+    ] ;
     dcterms:rights [
         a dcterms:RightsStatement ;
         rdfs:label "Rights for the combined dataset are not fully established"@en ;
@@ -24,18 +31,21 @@ lbd:londonBikeSharingDataset a dcat:Dataset ;
         dcat:startDate "2015-01-04T00:00:00"^^xsd:dateTime ;
         dcat:endDate "2017-01-03T23:00:00"^^xsd:dateTime
     ] ;
-    dcat:landingPage <https://www.kaggle.com/datasets/hmavrodiev/london-bike-sharing-dataset> ;
+    dcat:landingPage <https://github.com/rubuy-74/fair-project> ;
     dcterms:source <https://www.kaggle.com/datasets/hmavrodiev/london-bike-sharing-dataset>, <https://cycling.data.tfl.gov.uk/> , <https://www.gov.uk/bank-holidays> , <https://freemeteo.com> ;
     dcterms:provenance [
         a dcterms:ProvenanceStatement ;
-        rdfs:label "The Kaggle description attributes the compilation to Hristo Mavrodiev and identifies TfL cycling data, Freemeteo weather data and UK bank holidays as sources. Bike hires are grouped by start hour. Timestamp timezone is not specified by the checked Kaggle description; no UTC or daylight-saving interpretation is asserted."@en
+        rdfs:label "The Kaggle description attributes the compilation to Hristo Mavrodiev and identifies TfL cycling data, Freemeteo weather data and UK bank holidays as sources. Bike hires are grouped by start hour. Rubem Neto and Pedro Oliveira performed the FAIRification. The source description does not specify a timezone; the RDF uses the teacher-approved minute-precision timestamp convention."@en
     ] ;
     dcat:keyword "bike sharing" , "London" , "transport" , "weather" , "time series" ;
     dcat:distribution lbd:londonMergedCsvDistribution, lbd:londonBikesRdfDistribution .
 
 lbd:londonMergedCsvDistribution a dcat:Distribution ;
     rdfs:label "london_merged.csv"@en ;
-    dcat:accessURL <https://www.kaggle.com/datasets/hmavrodiev/london-bike-sharing-dataset/data> ;
+    dcterms:description "Original merged CSV, preserved locally at data/london_merged-original.csv. The project access/download URL is planned; deployment pending. The Kaggle access page is retained as an alternative. Recorded size and SHA-256 describe the current local file; verify the published bytes before confirming availability."@en ;
+    dcat:accessURL <https://www.kaggle.com/datasets/hmavrodiev/london-bike-sharing-dataset/data>,
+        <https://w3id.org/FAIR-course-UT/2026/group20/data/london_merged-original.csv> ;
+    dcat:downloadURL <https://w3id.org/FAIR-course-UT/2026/group20/data/london_merged-original.csv> ;
     dcat:mediaType "text/csv" ;
     dcat:byteSize 1034821 ;
     spdx:checksum [
@@ -44,12 +54,18 @@ lbd:londonMergedCsvDistribution a dcat:Distribution ;
         spdx:checksumValue "db881c26314329377f81265480856f2fe4fb049fc1e79bd5f548813c99c4c446"^^xsd:hexBinary
     ] .
 
-# Local artifact only. Add publication URLs only after deployment, and refresh
-# byte size and SHA-256 only after the final concurrent RDF edits are complete.
 lbd:londonBikesRdfDistribution a dcat:Distribution ;
     rdfs:label "london_bikes.ttl"@en ;
-    dcterms:description "Local RDF artifact at data/london_bikes.ttl. No public download endpoint is asserted. Byte size and SHA-256 must be added after the final RDF changes."@en ;
-    dcterms:identifier "data/london_bikes.ttl" ;
+    dcterms:description "RDF representation of the hourly London bicycle-rental observations, maintained locally at data/london_bikes.ttl. The w3id access/download endpoint and identifier are planned; deployment pending. Recorded size and SHA-256 describe the current local file; verify the published bytes before confirming availability."@en ;
+    dcterms:identifier "https://w3id.org/FAIR-course-UT/2026/group20/data/london_bikes.ttl" ;
+    dcat:accessURL <https://w3id.org/FAIR-course-UT/2026/group20/data/london_bikes.ttl> ;
+    dcat:downloadURL <https://w3id.org/FAIR-course-UT/2026/group20/data/london_bikes.ttl> ;
     dcterms:format <http://www.w3.org/ns/formats/Turtle> ;
     dcterms:conformsTo <https://www.w3.org/TR/turtle/> ;
-    dcat:mediaType "text/turtle" .
+    dcat:mediaType "text/turtle" ;
+    dcat:byteSize 47187685 ;
+    spdx:checksum [
+        a spdx:Checksum ;
+        spdx:algorithm spdx:checksumAlgorithm_sha256 ;
+        spdx:checksumValue "3de43362884fbca8413d470899335474eb769405a45afa2ab36527e55e8a1a09"^^xsd:hexBinary
+    ] .
