@@ -1,8 +1,0 @@
-PREFIX base: <http://localhost:3333/>
-PREFIX schema: <http://schema.org/>
-
-# CQ7. The runner compares these values with an inclusive naive hourly grid.
-SELECT ?observation ?timestamp WHERE {
-  ?observation a schema:Observation ; base:timestamp ?timestamp .
-}
-ORDER BY ?timestamp ?observation

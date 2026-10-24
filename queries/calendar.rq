@@ -1,17 +1,13 @@
-PREFIX base: <http://localhost:3333/>
 PREFIX schema: <http://schema.org/>
+PREFIX wd: <https://www.wikidata.org/entity/>
 
-# CQ2 and CQ3. Each flag is analysed separately, not as a joint grouping.
+# Each flag is analysed separately, not as a joint grouping.
 SELECT ?flag ?value (COUNT(*) AS ?hours) (SUM(?hires) AS ?totalHires)
        (AVG(?hires) AS ?meanHourlyHires) WHERE {
-  {
-    ?observation base:is_weekend/schema:value ?value .
-    BIND(base:is_weekend AS ?flag)
-  } UNION {
-    ?observation base:is_holiday/schema:value ?value .
-    BIND(base:is_holiday AS ?flag)
-  }
-  ?observation schema:measuredValue ?hires .
+  VALUES ?flag { wd:Q211391 wd:Q1445650 }
+  ?observation schema:value ?hires ;
+               schema:additionalProperty ?attribute .
+  ?attribute schema:propertyID ?flag ; schema:value ?value .
 }
 GROUP BY ?flag ?value
 ORDER BY ?flag ?value
