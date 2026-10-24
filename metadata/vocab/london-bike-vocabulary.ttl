@@ -2,6 +2,7 @@
 @prefix qudt: <http://qudt.org/schema/qudt/> .
 @prefix unit: <http://qudt.org/vocab/unit/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
 
 lbd:HourlyBikeShareCount a sosa:ObservableProperty ;
     rdfs:label "hourly bike share count"@en ;

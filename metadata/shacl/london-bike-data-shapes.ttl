@@ -7,6 +7,44 @@
 @prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
 @prefix obo:    <http://purl.obolibrary.org/obo/> .
 
+lbd:ObservationShape a sh:NodeShape ;
+    sh:targetClass schema:Observation ;
+    sh:targetSubjectsOf base:timestamp ;
+    sh:class schema:Observation ;
+    sh:nodeKind sh:IRI ;
+    sh:property [ sh:path base:timestamp ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:dateTime ;
+        sh:pattern "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$" ] ;
+    sh:property [ sh:path schema:measuredValue ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:int ; sh:minInclusive 0 ] ;
+    sh:property [ sh:path base:weather_code ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:int ; sh:in ( "1"^^xsd:int "2"^^xsd:int "3"^^xsd:int
+            "4"^^xsd:int "7"^^xsd:int "10"^^xsd:int "26"^^xsd:int "94"^^xsd:int ) ] ;
+    sh:property [ sh:path base:weather ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path schema:measuredProperty ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:hasValue schema:RentAction ] ;
+    sh:property [ sh:path obo:BFO_0000066 ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:hasValue obo:GAZ_00003672 ] ;
+    sh:property [ sh:path base:is_holiday ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ; sh:node lbd:HolidayValueShape ] ;
+    sh:property [ sh:path base:is_weekend ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ; sh:node lbd:WeekendValueShape ] ;
+    sh:property [ sh:path base:temperature ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ; sh:node lbd:TemperatureValueShape ] ;
+    sh:property [ sh:path base:temperature_sensation ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ; sh:node lbd:TemperatureSensationValueShape ] ;
+    sh:property [ sh:path base:humidity ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ; sh:node lbd:HumidityValueShape ] ;
+    sh:property [ sh:path base:wind_speed ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ; sh:node lbd:WindValueShape ] ;
+    sh:property [ sh:path obo:RO_0002092 ; sh:minCount 2 ; sh:maxCount 2 ] ;
+    sh:property [ sh:path obo:RO_0002092 ;
+        sh:qualifiedValueShape lbd:SeasonRelationShape ;
+        sh:qualifiedMinCount 1 ; sh:qualifiedMaxCount 1 ; sh:qualifiedValueShapesDisjoint true ] ;
+    sh:property [ sh:path obo:RO_0002092 ;
+        sh:qualifiedValueShape lbd:WeatherRelationShape ;
+        sh:qualifiedMinCount 1 ; sh:qualifiedMaxCount 1 ; sh:qualifiedValueShapesDisjoint true ] .
+
 lbd:PropertyValueShape a sh:NodeShape ;
     sh:targetClass schema:PropertyValue ;
     sh:closed true ;

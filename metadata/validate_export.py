@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+import time
 from pathlib import Path
 
 import rdflib
@@ -25,17 +26,25 @@ def main() -> int:
     obo = Namespace("http://purl.obolibrary.org/obo/")
     try:
         print(f"Loading {args.export}", flush=True)
+        started = time.perf_counter()
         data = Dataset(default_union=True)
         data.parse(args.export, format=args.format)
+        print(f"Loaded in {time.perf_counter() - started:.1f}s", flush=True)
+        observations = set(data.subjects(RDF.type, schema.Observation))
         attributes = set(data.subjects(RDF.type, schema.PropertyValue))
         relations = set(data.objects(None, obo.RO_0002092))
-        print(f"Targets: {len(attributes)} attributes, {len(relations)} relations", flush=True)
-        if not attributes and not relations:
+        print(f"Targets: {len(observations)} observations, {len(attributes)} attributes, "
+              f"{len(relations)} relations", flush=True)
+        if not observations and not attributes and not relations:
             print("No data-shape targets found; refusing a vacuous validation pass.", file=sys.stderr)
             return 2
 
         shapes = Graph().parse(root / "metadata/shacl/london-bike-data-shapes.ttl")
-        conforms, report, _ = validate(data, shacl_graph=shapes, inference="none", meta_shacl=True)
+        started = time.perf_counter()
+        conforms, report, _ = validate(
+            data, shacl_graph=shapes, inference="none", meta_shacl=True, inplace=True,
+        )
+        print(f"Validated in {time.perf_counter() - started:.1f}s", flush=True)
         if not isinstance(report, Graph):
             raise ValueError(f"SHACL validation failed: {report}")
         if args.report:

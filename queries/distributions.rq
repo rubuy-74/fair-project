@@ -1,0 +1,22 @@
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX spdx: <http://spdx.org/rdf/terms#>
+
+# CQ9. OPTIONAL preserves the local RDF distribution without inventing a URL.
+SELECT ?dataset ?distribution ?label ?identifier ?description ?mediaType
+       ?accessURL ?downloadURL ?byteSize ?algorithm ?checksum WHERE {
+  ?dataset a dcat:Dataset ; dcat:distribution ?distribution .
+  ?distribution a dcat:Distribution .
+  OPTIONAL { ?distribution rdfs:label ?label }
+  OPTIONAL { ?distribution dcterms:identifier ?identifier }
+  OPTIONAL { ?distribution dcterms:description ?description }
+  OPTIONAL { ?distribution dcat:mediaType ?mediaType }
+  OPTIONAL { ?distribution dcat:accessURL ?accessURL }
+  OPTIONAL { ?distribution dcat:downloadURL ?downloadURL }
+  OPTIONAL { ?distribution dcat:byteSize ?byteSize }
+  OPTIONAL {
+    ?distribution spdx:checksum [ spdx:algorithm ?algorithm ; spdx:checksumValue ?checksum ] .
+  }
+}
+ORDER BY ?distribution ?accessURL ?downloadURL
