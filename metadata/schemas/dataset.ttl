@@ -1,0 +1,102 @@
+@prefix profile: <https://w3id.org/FAIR-course-UT/2026/group20/schema/> .
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Install as a custom FDP 1.18.2 schema extending the built-in Dataset schema
+# through FDP's schema extends setting, not as a replacement for that schema.
+# Resource/Dataset requirements (title, publisher, version, theme) are inherited.
+# All shapes are open so FDP can add its own administrative metadata.
+profile:DatasetShape a sh:NodeShape ;
+    sh:targetClass dcat:Dataset ;
+    sh:property [
+        sh:path dcterms:identifier ; sh:name "Source identifier" ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        dash:editor dash:TextFieldEditor ; sh:order 30
+    ], [
+        sh:path dcterms:description ; sh:minCount 1 ; sh:nodeKind sh:Literal ;
+        dash:editor dash:TextAreaEditor ; sh:order 2
+    ], [
+        sh:path dcterms:creator ; sh:name "Original creator" ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:BlankNodeOrIRI ;
+        sh:node profile:AgentShape ; dash:editor dash:BlankNodeEditor ; sh:order 31
+    ], [
+        sh:path dcterms:contributor ; sh:name "FAIRification contributors" ;
+        sh:nodeKind sh:BlankNodeOrIRI ; sh:node profile:AgentShape ;
+        dash:editor dash:BlankNodeEditor ; sh:order 32
+    ], [
+        sh:path dcterms:rights ; sh:name "Rights statement IRI" ;
+        sh:description "Use a stable IRI and include its full label, description and source triples in the submitted graph. This statement is not a reuse licence." ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:node profile:RightsShape ; dash:editor dash:URIEditor ; sh:order 7
+    ], [
+        sh:path dcterms:temporal ; sh:name "Temporal coverage" ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:BlankNodeOrIRI ;
+        sh:node profile:PeriodOfTimeShape ;
+        dash:editor dash:BlankNodeEditor ; sh:order 33
+    ], [
+        sh:path dcterms:provenance ; sh:name "Provenance" ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:BlankNodeOrIRI ;
+        sh:node profile:ProvenanceShape ;
+        dash:editor dash:BlankNodeEditor ; sh:order 34
+    ], [
+        sh:path dcat:landingPage ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        dash:editor dash:URIEditor ; sh:order 25
+    ], [
+        sh:path dcterms:source ; sh:name "Source pages" ;
+        sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        dash:editor dash:URIEditor ; sh:order 35
+    ], [
+        sh:path dcat:keyword ; sh:minCount 1 ; sh:datatype xsd:string ;
+        dash:editor dash:TextFieldEditor ; sh:order 24
+    ], [
+        # FDP creates the parent first and manages child links. Do not require
+        # a link or inline child descriptions here. Final export validation
+        # must separately check that both distributions were created/linked.
+        sh:path dcat:distribution ; sh:nodeKind sh:IRI ;
+        dash:editor dash:URIEditor ; sh:order 36
+    ] .
+
+profile:AgentShape a sh:NodeShape ;
+    sh:class dcterms:Agent ;
+    sh:property [
+        sh:path rdfs:label ; sh:name "Name" ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:Literal ;
+        dash:editor dash:TextFieldEditor ; sh:order 1
+    ] .
+
+profile:RightsShape a sh:NodeShape ;
+    sh:class dcterms:RightsStatement ;
+    sh:property [
+        sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:Literal ;
+        dash:editor dash:TextFieldEditor ; sh:order 1
+    ], [
+        sh:path dcterms:description ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:Literal ;
+        dash:editor dash:TextAreaEditor ; sh:order 2
+    ], [
+        sh:path dcterms:source ; sh:minCount 1 ; sh:nodeKind sh:IRI ;
+        dash:editor dash:URIEditor ; sh:order 3
+    ] .
+
+profile:ProvenanceShape a sh:NodeShape ;
+    sh:class dcterms:ProvenanceStatement ;
+    sh:property [
+        sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:Literal ;
+        dash:editor dash:TextAreaEditor ; sh:order 1
+    ] .
+
+profile:PeriodOfTimeShape a sh:NodeShape ;
+    sh:class dcterms:PeriodOfTime ;
+    # xsd:dateTime accepts the source's timezone-less values; do not infer UTC.
+    sh:property [
+        sh:path dcat:startDate ; sh:name "Start (source local time)" ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
+        dash:editor dash:TextFieldEditor ; sh:order 1
+    ], [
+        sh:path dcat:endDate ; sh:name "End (source local time)" ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
+        dash:editor dash:TextFieldEditor ; sh:order 2
+    ] .

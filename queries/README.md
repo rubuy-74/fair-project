@@ -1,72 +1,57 @@
-# Local Competency Question Evidence
+# Three Local Queries
 
-Run from the repository root (no endpoint, server, or network required):
-
-```sh
-/tmp/opencode/fair-report-venv/bin/python queries/run.py
-/tmp/opencode/fair-report-venv/bin/python queries/run.py --hour 2015-07-01T08:00:00
-```
-
-Requires Python 3 and RDFLib (tested with 7.6.0 in the supplied environment).
-Full-graph parsing took about 31 seconds; unaffected queries took about 29
-seconds together. Small corrected/pending-path checks can be run with:
+Run the selected queries with Python 3 and RDFLib (tested with 7.6.0):
 
 ```sh
-/tmp/opencode/fair-report-venv/bin/python queries/test_run.py
+/tmp/opencode/fair-venv/bin/python -B queries/run.py
+/tmp/opencode/fair-venv/bin/python -B queries/test_run.py
 ```
 
-JSON is written to stdout, progress to stderr. Paths default to this repository,
-independent of the working directory. Optional `--data`, `--metadata`, and `--csv`
-accept alternative local files. All queries can also run directly in a local
-SPARQL 1.1 engine against the indicated graph.
+The interpreter path is the available local virtual environment. Any Python
+environment with RDFLib installed can be used instead. No endpoint, server,
+remote download, or URI dereferencing is used.
 
-| Report question | Query | Evidence |
-| --- | --- | --- |
-| CQ1: given hour | `hour.rq` | Observation, timestamp and hire count; edit the example literal or use `--hour` |
-| CQ2: weekend | `calendar.rq` | Hours, total and mean hourly hires by weekend flag |
-| CQ3: bank holiday | `calendar.rq` | Hours, total and mean hourly hires by holiday flag |
-| CQ4: measurements | `measurements.rq` | Mean hourly hires by measurement bin, with units and sample sizes |
-| CQ5: season | `seasons.rq` | Hours, total and mean hourly hires for four season entities |
-| CQ6: original weather | `weather.rq` | Hours, total and mean hourly hires for each preserved original code |
-| CQ7: absent hours | `timestamps.rq` + runner | Inclusive hourly grid, missing timestamps and duplicate-slot counts |
-| CQ8: attribution/rights | `metadata.rq` | Creator, sources, rights, any explicit licence and provenance |
-| CQ9: access/integrity | `distributions.rq` + runner | Both distributions, recorded access/download links and checksums; local CSV SHA-256 comparison |
+JSON is written to stdout, progress to stderr. Default paths are relative to
+the repository, independent of the working directory. Optional `--data` and
+`--metadata` select other local files. The SPARQL files can also run directly in
+a local SPARQL 1.1 engine against the indicated graph.
 
-Observation queries use `data/london_bikes.ttl`; metadata queries use
-`data/london-bike-metadata.ttl`. Schema.org uses `http://schema.org/`, and the
-local base is `http://localhost:3333/`. No URI is dereferenced. Season wrappers
-have HTTP Wikidata types and HTTPS season values; weather entity wrappers are
-not used to reconstruct original codes because their mapping is lossy.
+## What Each Query Contributes
+
+| Query | Question | Output | Project Value |
+| --- | --- | --- | --- |
+| `calendar.rq` | How does rental demand differ on weekends and public holidays? | Observed hours, total hires and mean hourly hires for each boolean flag | Compares demand across calendar contexts |
+| `measurements.rq` | How does demand vary with temperature, feels-like temperature, humidity and wind speed? | Measurement identifier, unit, bin bounds, observed hours and mean hourly hires | Demonstrates analysis across semantically identified, unit-bearing measurements |
+| `metadata.rq` | Who created the dataset, where did it come from, and what is known about reuse rights? | Creator, source links, provenance, rights and any explicit licence | Makes attribution and reuse constraints inspectable |
+
+JSON output contains exactly three keys: `calendar.rq`, `measurements.rq`, and
+`metadata.rq`. Each key maps directly to that query's result rows. Weekend and
+holiday results are together under `calendar.rq`, distinguished by `flag`.
+
+## Local Data and Model
+
+The calendar and measurement queries use `data/london_bikes.ttl`. The metadata
+query uses `data/london-bike-metadata.ttl`. No CSV is read by the runner.
+
+Schema.org uses `http://schema.org/`. Rental counts are in `schema:value`.
+Calendar flags and measurements are linked through `schema:additionalProperty`
+and identified by `schema:propertyID`, not observation-specific resource paths.
+The queries do not use the old `http://localhost:3333/` properties.
 
 ## Interpretation
 
-- Timestamps must be `YYYY-MM-DDTHH:MM:SS`, timezone unspecified. The runner
-  requires hour-aligned values and refuses CQ1/CQ7 while timestamps retain `Z`
-  or any other timezone. It never removes an offset or assumes UTC.
-- CQ7 compares the observed minimum and maximum inclusively, not a timezone-
-  aware calendar or an extrapolated coverage period. The JSON includes every
-  missing slot, not just a count. No daylight-saving explanation is assumed.
-- CQ6 requires exactly one `base:weather_code` with datatype `xsd:int` per
-  observation and all seven source codes: 1, 2, 3, 4, 7, 10 and 26. Missing or
-  partial correction is reported as pending rather than silently undercounted.
-- CQ4 bins are half-open `[lower, upper)`: 5 Celsius for both temperatures,
-  10 percentage points for humidity and 5 km/h for wind. These are descriptive,
-  unadjusted associations, not evidence of causal effects. Means are over
-  available observations only, not imputed missing hours.
-- CQ8 reports `dcterms:rights` uncertainty, not a verified licence covering the
-  combined dataset. Blank-node identifiers in JSON are run-local identifiers.
-- CQ9 preserves distributions with no public URL. The RDF distribution is local;
-  public RDF access remains pending until a deployment URL is actually recorded.
-  A Kaggle access page is not a direct download URL. The CSV checksum check reads
-  local bytes and does not establish remote availability or permission to reuse.
-
-## Results Policy
-
-No expected aggregates or frozen results are bundled while the main RDF is
-being corrected. The runner always computes evidence from the current files;
-`context.corrected_data_ready` indicates timestamp and weather-code readiness,
-not full SHACL conformance or CSV-to-RDF fidelity. Unaffected calendar,
-measurement and season aggregates can be inspected before those corrections.
-Only archive stdout as `queries/results.json` after the final graph and metadata
-are ready and `corrected_data_ready` is true. Public RDF publication and complete
-reuse permissions can still remain pending in that evidence.
+- Calendar flags are analysed separately, not as a joint weekend/holiday grouping.
+  Mean hourly hires are more comparable than totals when groups contain different
+  numbers of observed hours. Non-holiday hours can include weekends.
+- Measurement bins are half-open `[lower, upper)`: 5 Celsius for both temperature
+  measures, 10 percentage points for humidity and 5 km/h for wind. An observation
+  contributes once to each of the four measurement analyses, so their sample
+  counts should not be summed as distinct observation counts.
+- All aggregates describe available observations, not imputed missing hours.
+  They show associations, not causal effects; there is no adjustment for season,
+  hour of day or other confounding variables.
+- Metadata reports rights uncertainty, not verified permission to redistribute
+  the combined dataset. An absent licence is not an open licence. Blank-node
+  identifiers are run-local, and source URLs are reported without being accessed.
+- Query execution and regression tests are not full SHACL conformance, FAIR
+  certification, CSV-to-RDF fidelity or remote-deployment checks.

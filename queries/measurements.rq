@@ -1,32 +1,18 @@
-PREFIX base: <http://localhost:3333/>
 PREFIX schema: <http://schema.org/>
 
-# CQ4. Descriptive demand aggregates within half-open measurement bins.
 # Widths are 5 Celsius, 10 percentage points, and 5 km/h, respectively.
 SELECT ?measurement ?unit ?lower ?upper (COUNT(*) AS ?hours)
        (AVG(?hires) AS ?meanHourlyHires) WHERE {
-  {
-    ?observation base:temperature/schema:value ?value ;
-                 base:temperature/schema:unitCode ?unit .
-    BIND(base:temperature AS ?measurement)
-    BIND(5 AS ?width)
-  } UNION {
-    ?observation base:temperature_sensation/schema:value ?value ;
-                 base:temperature_sensation/schema:unitCode ?unit .
-    BIND(base:temperature_sensation AS ?measurement)
-    BIND(5 AS ?width)
-  } UNION {
-    ?observation base:humidity/schema:value ?value ;
-                 base:humidity/schema:unitCode ?unit .
-    BIND(base:humidity AS ?measurement)
-    BIND(10 AS ?width)
-  } UNION {
-    ?observation base:wind_speed/schema:value ?value ;
-                 base:wind_speed/schema:unitCode ?unit .
-    BIND(base:wind_speed AS ?measurement)
-    BIND(5 AS ?width)
+  VALUES (?measurement ?width) {
+    (<http://qudt.org/vocab/quantitykind/Temperature> 5)
+    (<https://bimerr.iot.linkeddata.es/def/weather#feels_like> 5)
+    (<https://bimerr.iot.linkeddata.es/def/weather#Humidity> 10)
+    (<https://bimerr.iot.linkeddata.es/def/weather#WindSpeed> 5)
   }
-  ?observation schema:measuredValue ?hires .
+  ?observation schema:value ?hires ;
+               schema:additionalProperty ?attribute .
+  ?attribute schema:propertyID ?measurement ; schema:value ?value ;
+             schema:unitCode ?unit .
   BIND(FLOOR(?value / ?width) * ?width AS ?lower)
   BIND(?lower + ?width AS ?upper)
 }

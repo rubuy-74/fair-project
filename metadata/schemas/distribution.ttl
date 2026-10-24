@@ -1,0 +1,72 @@
+@prefix profile: <https://w3id.org/FAIR-course-UT/2026/group20/schema/> .
+@prefix dash: <http://datashapes.org/dash#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix spdx: <http://spdx.org/rdf/terms#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Install as a custom FDP 1.18.2 schema extending the built-in Distribution
+# schema through FDP's schema extends setting. Title, publisher, version and
+# the built-in accessURL maxCount 1 remain inherited. No closed shapes.
+profile:DistributionShape a sh:NodeShape ;
+    sh:targetClass dcat:Distribution ;
+    sh:property [
+        sh:path rdfs:label ; sh:name "Source filename" ;
+        sh:maxCount 1 ; sh:nodeKind sh:Literal ;
+        dash:editor dash:TextFieldEditor ; sh:order 30
+    ], [
+        sh:path dcterms:description ; sh:minCount 1 ; sh:nodeKind sh:Literal ;
+        dash:editor dash:TextAreaEditor ; sh:order 2
+    ], [
+        sh:path dcterms:identifier ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        dash:editor dash:TextFieldEditor ; sh:order 31
+    ], [
+        sh:path dcterms:format ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        dash:editor dash:URIEditor ; sh:order 32
+    ], [
+        sh:path dcterms:conformsTo ; sh:nodeKind sh:IRI ;
+        dash:editor dash:URIEditor ; sh:order 33
+    ], [
+        sh:path dcat:downloadURL ; sh:name "Course W3ID download URL" ;
+        sh:description "URL syntax only; verify resolution and published bytes separately." ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:pattern "^https://w3id[.]org/FAIR-course-UT/2026/group20/[^?#\\s]+$" ;
+        dash:editor dash:URIEditor ; sh:order 23
+    ], [
+        sh:path dcat:mediaType ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:string ; sh:in ( "text/csv" "text/turtle" ) ;
+        dash:editor dash:EnumSelectEditor ; sh:order 24
+    ], [
+        sh:path dcat:byteSize ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:datatype xsd:integer ; sh:minInclusive 1 ;
+        dash:editor dash:TextFieldEditor ; sh:order 26
+    ], [
+        sh:path spdx:checksum ; sh:name "SHA-256 checksum" ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:BlankNodeOrIRI ;
+        sh:node profile:ChecksumShape ;
+        dash:editor dash:BlankNodeEditor ; sh:order 34
+    ] ;
+    sh:or (
+        [ sh:property [ sh:path dcat:mediaType ; sh:hasValue "text/csv" ] ;
+          sh:property [ sh:path dcat:accessURL ; sh:minCount 1 ] ]
+        [ sh:property [ sh:path dcat:mediaType ; sh:hasValue "text/turtle" ] ;
+          sh:property [ sh:path dcterms:identifier ; sh:minCount 1 ] ;
+          sh:property [ sh:path dcterms:format ; sh:hasValue <http://www.w3.org/ns/formats/Turtle> ] ;
+          sh:property [ sh:path dcterms:conformsTo ; sh:hasValue <https://www.w3.org/TR/turtle/> ] ]
+    ) .
+
+profile:ChecksumShape a sh:NodeShape ;
+    sh:class spdx:Checksum ;
+    sh:property [
+        sh:path spdx:algorithm ; sh:name "Algorithm" ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue spdx:checksumAlgorithm_sha256 ;
+        sh:nodeKind sh:IRI ; sh:in ( spdx:checksumAlgorithm_sha256 ) ;
+        dash:editor dash:EnumSelectEditor ; sh:order 1
+    ], [
+        sh:path spdx:checksumValue ; sh:name "SHA-256 (64 hexadecimal digits)" ;
+        sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:hexBinary ;
+        sh:pattern "^[0-9a-fA-F]{64}$" ;
+        dash:editor dash:TextFieldEditor ; sh:order 2
+    ] .
